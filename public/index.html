@@ -132,7 +132,7 @@
         .world-map {
             width: 100%;
             height: auto;
-            background: url('/assets/world.jpg') no-repeat center center;
+            background: url('assets/world.jpg') no-repeat center center;
             background-size: cover;
             border-radius: 8px;
             position: relative;
@@ -420,7 +420,7 @@
             .world-map {
                 width: 300%;
                 height: auto;
-                background: url('/assets/world.jpg') no-repeat center center;
+                background: url('assets/world.jpg') no-repeat center center;
                 background-size: cover;
                 border-radius: 8px;
                 position: relative;
@@ -1055,7 +1055,7 @@
         <button id="play-again">Play Again</button>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="socket.io/socket.io.js"></script>
     <script>
         // Game state
         const gameState = {
@@ -1166,12 +1166,12 @@
 
         // Sound effects
         const sounds = {
-            splash: new Audio("/assets/splash.mp3"),
-            error: new Audio("/assets/error.mp3"),
-            reinforce: new Audio("/assets/reinforce.wav"),
-            attack: new Audio("/assets/attack.mp3"),
-            fortify: new Audio("/assets/fortify.mp3"),
-            victory: new Audio("/assets/victory.wav")
+            splash: new Audio("assets/splash.mp3"),
+            error: new Audio("assets/error.mp3"),
+            reinforce: new Audio("assets/reinforce.wav"),
+            attack: new Audio("assets/attack.mp3"),
+            fortify: new Audio("assets/fortify.mp3"),
+            victory: new Audio("assets/victory.wav")
         };
 
         // Initialize the game
@@ -1237,7 +1237,10 @@
         // Multiplayer functionality
         function initializeMultiplayer() {
             // Connect to server
-            socket = io();
+            //socket = io();
+            socket = io({
+                path: '/world-domination/socket.io'
+            });
             
             // Update server status
             updateServerStatus('Connecting...', 'connecting');
