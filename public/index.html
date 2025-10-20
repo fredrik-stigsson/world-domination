@@ -3,8 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Domination</title>
+    <title>WORLD DOMINATION - Global Strategic Command</title>
     <style>
+        /* WW3 Military Theme */
+        :root {
+            --military-green: #2d4a2d;
+            --camo-dark: #3d5c3d;
+            --camo-light: #5a7a5a;
+            --desert-tan: #c2b280;
+            --ammo-brass: #b5a642;
+            --blood-red: #8b0000;
+            --steel-gray: #708090;
+            --black-ops: #1a1a1a;
+            --night-camo: #2a332a;
+            --urban-gray: #4a5568;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,12 +27,41 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
-            color: white;
+            font-family: 'Courier New', 'Arial', monospace;
+            background: linear-gradient(135deg, var(--black-ops) 0%, var(--night-camo) 100%);
+            color: var(--desert-tan);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
+
+        /* Military Grid Overlay */
+        .military-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(45, 74, 45, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 92, 59, 0.1) 0%, transparent 50%),
+                linear-gradient(90deg, rgba(181, 166, 66, 0.03) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(181, 166, 66, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Radiation Symbols for Atmosphere */
+        .radiation-symbol {
+            position: fixed;
+            opacity: 0.03;
+            font-size: 20em;
+            z-index: -1;
+        }
+
+        .rad1 { top: 10%; left: 10%; }
+        .rad2 { top: 60%; right: 10%; }
 
         .container {
             max-width: 95vw;
@@ -30,21 +73,57 @@
             text-align: center;
             margin-bottom: 15px;
             position: relative;
+            background: linear-gradient(135deg, var(--military-green) 0%, var(--black-ops) 100%);
+            border: 3px solid var(--ammo-brass);
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 45%, rgba(181, 166, 66, 0.1) 50%, transparent 55%),
+                linear-gradient(-45deg, transparent 45%, rgba(181, 166, 66, 0.1) 50%, transparent 55%);
+            background-size: 20px 20px;
         }
 
         h1 {
             font-size: clamp(1.8rem, 4vw, 2.8rem);
             margin-bottom: 8px;
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(to right, #f1c40f, #e74c3c);
+            background: linear-gradient(to right, var(--ammo-brass), var(--desert-tan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: titleGlow 3s infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
         }
 
         @keyframes titleGlow {
-            from { filter: drop-shadow(0 0 5px rgba(241, 196, 15, 0.7)); }
-            to { filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.7)); }
+            from { filter: drop-shadow(0 0 5px rgba(181, 166, 66, 0.7)); }
+            to { filter: drop-shadow(0 0 15px rgba(139, 0, 0, 0.7)); }
+        }
+
+        /* Warning Stripes */
+        .warning-stripe {
+            height: 8px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--blood-red),
+                var(--blood-red) 10px,
+                var(--desert-tan) 10px,
+                var(--desert-tan) 20px
+            );
+            margin: 15px 0;
+            border-radius: 2px;
         }
 
         .game-info {
@@ -53,13 +132,14 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 10px 20px 10px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
             border-radius: 10px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--steel-gray);
             overflow: auto;
+            position: relative;
         }
 
         .player-info {
@@ -75,13 +155,24 @@
             gap: 20px;
             padding: 8px 12px;
             border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             transition: all 0.3s;
+            border: 1px solid var(--steel-gray);
+            position: relative;
         }
 
+        /* .player-card::before {
+            content: "🪖";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+        } */
+
         .player-card.active {
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px var(--ammo-brass);
             transform: scale(1.05);
+            border-color: var(--ammo-brass);
         }
 
         .player-color {
@@ -120,14 +211,29 @@
 
         .map-container {
             flex: 3;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 10px;
-            padding: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            padding: 4px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
             position: relative;
             overflow: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--steel-gray);
         }
+
+        /* .map-container::before {
+            content: "THEATER MAP";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 2;
+        } */
 
         .world-map {
             width: 100%;
@@ -143,44 +249,92 @@
 
         .controls {
             flex: 1;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 10px;
             padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--steel-gray);
+            position: relative;
+        }
+
+        .controls::before {
+            content: "COMMAND CENTER";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 2;
         }
 
         .phase-controls {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             transition: all 0.3s;
+            border: 1px solid var(--camo-dark);
+            position: relative;
         }
+
+        /* .phase-controls::before {
+            content: "⚔️";
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 1.2em;
+        } */
 
         .phase-controls:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            border-color: var(--ammo-brass);
         }
 
+        /* Military Buttons */
         button {
             display: inline-block;
-            background: linear-gradient(45deg, #4a90e2, #3a7bc8);
-            color: white;
-            border: none;
+            background: linear-gradient(135deg, var(--military-green) 0%, var(--camo-dark) 100%);
+            color: var(--desert-tan);
+            border: 2px solid var(--ammo-brass);
             padding: 12px 18px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
             margin: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             font-size: clamp(0.9rem, 2vw, 1rem);
             touch-action: manipulation;
             width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(181, 166, 66, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
         }
 
         .join-room-btn {
@@ -188,21 +342,22 @@
         }
 
         button:hover {
-            background: linear-gradient(45deg, #3a7bc8, #2a6bb8);
+            background: linear-gradient(135deg, var(--camo-light) 0%, var(--military-green) 100%);
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 12px rgba(181, 166, 66, 0.3);
         }
 
         button:active {
             transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         button:disabled {
-            background: #666;
+            background: var(--urban-gray);
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+            border-color: var(--steel-gray);
         }
 
         .territory-info {
@@ -210,15 +365,17 @@
             padding: 12px;
             border-radius: 8px;
             margin-top: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--steel-gray);
         }
 
         .battle-result {
             margin: 12px 0;
             padding: 8px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 8px;
             font-size: 0.9rem;
+            border-left: 3px solid var(--blood-red);
         }
 
         .territory {
@@ -233,19 +390,19 @@
         .territory:hover {
             stroke-width: 3;
             stroke: white;
-            filter: drop-shadow(0 0 8px gold);
+            filter: drop-shadow(0 0 8px var(--ammo-brass));
         }
 
         .selected {
-            stroke: gold;
+            stroke: var(--ammo-brass);
             stroke-width: 4;
-            filter: drop-shadow(0 0 10px gold);
+            filter: drop-shadow(0 0 10px var(--ammo-brass));
         }
 
         .attack-source {
-            stroke: #e74c3c;
+            stroke: var(--blood-red);
             stroke-width: 4;
-            filter: drop-shadow(0 0 10px #e74c3c);
+            filter: drop-shadow(0 0 10px var(--blood-red));
         }
 
         .attack-target {
@@ -268,13 +425,14 @@
 
         .region-bonus {
             position: absolute;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 12px;
             pointer-events: none;
             z-index: 1;
+            border: 1px solid var(--ammo-brass);
         }
 
         .troop-selection {
@@ -283,13 +441,15 @@
             gap: 10px;
             margin: 10px 0;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 8px;
+            border: 1px solid var(--steel-gray);
         }
 
         .troop-slider {
             width: 100%;
             margin: 10px 0;
+            background: var(--camo-dark);
         }
 
         .troop-buttons {
@@ -311,14 +471,18 @@
             right: 20px;
             left: 20px;
             padding: 12px 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-left: 5px solid #f1c40f;
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 5px solid var(--ammo-brass);
             border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
             transform: translateY(-150%);
             transition: transform 0.5s;
             z-index: 1000;
             text-align: center;
+            border: 1px solid var(--steel-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
         }
 
         @media (min-width: 768px) {
@@ -340,16 +504,32 @@
         }
 
         .instructions {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             padding: 12px;
             border-radius: 8px;
             margin-top: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--steel-gray);
+            position: relative;
+        }
+
+        .instructions::before {
+            content: "FIELD MANUAL";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .instructions h3 {
             margin-bottom: 8px;
-            color: #f1c40f;
+            color: var(--ammo-brass);
             font-size: 1.1rem;
         }
 
@@ -365,37 +545,37 @@
         .phase-instructions {
             margin-top: 8px;
             padding: 8px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 5px;
             font-size: 0.85rem;
+            border-left: 3px solid var(--ammo-brass);
         }
-
-        /* .mobile-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .mobile-controls {
-                display: none;
-            }
-        } */
-
-        /* .mobile-controls button {
-            flex: 1;
-            min-width: 120px;
-        } */
 
         footer {
             text-align: center;
             margin-top: 15px;
             padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 8px;
             font-size: 0.8rem;
             color: #bbb;
+            border: 1px solid var(--steel-gray);
+            position: relative;
+        }
+
+        footer::before {
+            content: "CLASSIFIED";
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--blood-red);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.6rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Mobile-specific optimizations */
@@ -445,7 +625,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -466,11 +646,13 @@
         .victory-title {
             font-size: clamp(2rem, 6vw, 4rem);
             margin-bottom: 20px;
-            background: linear-gradient(to right, #f1c40f, #e74c3c);
+            background: linear-gradient(to right, var(--ammo-brass), var(--blood-red));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(241, 196, 15, 0.7);
+            text-shadow: 0 0 20px rgba(181, 166, 66, 0.7);
             animation: victoryPulse 2s infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 4px;
         }
 
         @keyframes victoryPulse {
@@ -481,7 +663,9 @@
         .victory-player {
             font-size: clamp(1.5rem, 4vw, 2.5rem);
             margin-bottom: 30px;
-            color: white;
+            color: var(--desert-tan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .victory-message {
@@ -489,77 +673,61 @@
             margin-bottom: 30px;
             max-width: 600px;
             line-height: 1.5;
+            color: var(--desert-tan);
         }
 
-        .player-setup {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            text-align: center;
-        }
-
-        .player-setup h3 {
-            margin-bottom: 15px;
-            color: #f1c40f;
-        }
-
-        .player-count-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .player-count-buttons button {
-            width: 50px;
-            height: 50px;
-            font-size: 1.2rem;
-            border-radius: 50%;
-        }
-
-        .player-count-buttons button.active {
-            background: linear-gradient(45deg, #f1c40f, #e67e22);
-            box-shadow: 0 0 15px rgba(241, 196, 15, 0.7);
-        }
-
-        /* Multiplayer Lobby Styles */
+        /* Multiplayer Lobby Styles - Military Theme */
         .multiplayer-lobby {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            background: linear-gradient(135deg, var(--black-ops) 0%, var(--night-camo) 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 3000;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', monospace;
         }
 
         .lobby-container {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             padding: 30px;
             border-radius: 15px;
-            max-width: 900px;
+            max-width: 1000px;
             width: 95%;
             max-height: 90vh;
             overflow-y: auto;
-            color: white;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--desert-tan);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 3px solid var(--ammo-brass);
+            position: relative;
+        }
+
+        .lobby-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 45%, rgba(181, 166, 66, 0.1) 50%, transparent 55%),
+                linear-gradient(-45deg, transparent 45%, rgba(181, 166, 66, 0.1) 50%, transparent 55%);
+            background-size: 20px 20px;
+            pointer-events: none;
         }
 
         .lobby-container h2 {
             text-align: center;
             margin-bottom: 20px;
-            background: linear-gradient(to right, #f1c40f, #e74c3c);
+            background: linear-gradient(to right, var(--ammo-brass), var(--desert-tan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
         .game-mode-selection {
@@ -571,27 +739,31 @@
 
         .mode-btn {
             background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: var(--desert-tan);
+            border: 2px solid var(--steel-gray);
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
         }
 
         .mode-btn.active {
-            background: linear-gradient(45deg, #4a90e2, #3a7bc8);
-            border-color: #4a90e2;
-            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+            background: linear-gradient(135deg, var(--military-green) 0%, var(--camo-dark) 100%);
+            border-color: var(--ammo-brass);
+            box-shadow: 0 0 15px rgba(181, 166, 66, 0.5);
         }
 
         .server-status {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 20px;
             text-align: center;
+            border: 1px solid var(--steel-gray);
         }
 
         .status-online {
@@ -599,11 +771,11 @@
         }
 
         .status-offline {
-            color: #e74c3c;
+            color: var(--blood-red);
         }
 
         .status-connecting {
-            color: #f39c12;
+            color: var(--ammo-brass);
         }
 
         .player-info-lobby {
@@ -615,16 +787,18 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+            border: 1px solid var(--steel-gray);
         }
 
         .player-info-lobby input {
             padding: 8px 12px;
             border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--steel-gray);
             background: rgba(0, 0, 0, 0.5);
-            color: white;
+            color: var(--desert-tan);
             flex: 1;
             min-width: 150px;
+            font-family: 'Courier New', monospace;
         }
 
         .lobby-actions {
@@ -635,10 +809,39 @@
 
         .create-room, .join-room {
             flex: 1;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             padding: 20px;
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--steel-gray);
+            position: relative;
+        }
+
+        .create-room::before {
+            content: "CREATE MISSION";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .join-room::before {
+            content: "JOIN MISSION";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .create-room input {
@@ -646,9 +849,10 @@
             padding: 10px;
             margin: 8px 0;
             border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--steel-gray);
             background: rgba(0, 0, 0, 0.5);
-            color: white;
+            color: var(--desert-tan);
+            font-family: 'Courier New', monospace;
         }
 
         .rooms-list {
@@ -665,11 +869,13 @@
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s;
+            border: 1px solid var(--steel-gray);
         }
 
         .room-item:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
+            border-color: var(--ammo-brass);
         }
 
         .room-item-info {
@@ -679,6 +885,7 @@
         .room-item-name {
             font-weight: bold;
             margin-bottom: 5px;
+            color: var(--desert-tan);
         }
 
         .room-item-details {
@@ -687,11 +894,26 @@
         }
 
         .current-room {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--steel-gray);
+            position: relative;
+        }
+
+        .current-room::before {
+            content: "MISSION CONTROL";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .room-info {
@@ -700,6 +922,7 @@
             border-radius: 5px;
             margin: 10px 0;
             font-size: 0.9rem;
+            border: 1px solid var(--steel-gray);
         }
 
         .room-info code {
@@ -707,6 +930,7 @@
             padding: 2px 6px;
             border-radius: 3px;
             font-family: monospace;
+            color: var(--ammo-brass);
         }
 
         .room-players {
@@ -721,6 +945,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            border: 1px solid var(--steel-gray);
         }
 
         .player-color-indicator {
@@ -731,7 +956,7 @@
         }
 
         .host-indicator {
-            color: #f1c40f;
+            color: var(--ammo-brass);
             font-weight: bold;
             margin-left: auto;
         }
@@ -743,7 +968,8 @@
         }
 
         .primary {
-            background: linear-gradient(45deg, #27ae60, #2ecc71) !important;
+            background: linear-gradient(135deg, var(--military-green) 0%, #1a3a1a 100%) !important;
+            border-color: #2ecc71 !important;
         }
 
         .local-section .player-setup {
@@ -755,28 +981,57 @@
             justify-content: center;
             gap: 10px;
             margin: 20px 0;
+            flex-wrap: wrap; /* Ensure buttons wrap on very small screens */
         }
 
         .player-count-buttons-lobby button {
-            width: 60px;
-            height: 60px;
-            font-size: 1.2rem;
+            /* Use relative units for better responsiveness */
+            width: clamp(50px, 15vw, 70px); /* Minimum 50px, ideal 15vw, maximum 70px */
+            height: clamp(50px, 15vw, 70px);
+            
+            /* Better font scaling */
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            
+            /* Ensure circular shape */
             border-radius: 50%;
+            
+            /* Improve touch experience */
+            min-width: 0; /* Prevent flexbox from overriding width */
+            aspect-ratio: 1 / 1; /* Maintain square ratio */
+            
+            /* Better mobile interaction */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
         }
 
         .player-count-buttons-lobby button.active {
-            background: linear-gradient(45deg, #f1c40f, #e67e22);
-            box-shadow: 0 0 15px rgba(241, 196, 15, 0.7);
+            background: linear-gradient(135deg, var(--ammo-brass), #e67e22);
+            box-shadow: 0 0 15px rgba(181, 166, 66, 0.7);
         }
 
         /* Chat Styles */
         .chat-container {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 10px;
             padding: 15px;
             margin-top: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--steel-gray);
             display: none;
+            position: relative;
+        }
+
+        .chat-container::before {
+            content: "COMMS CHANNEL";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .chat-messages {
@@ -787,6 +1042,7 @@
             padding: 10px;
             margin-bottom: 10px;
             font-size: 0.9rem;
+            border: 1px solid var(--steel-gray);
         }
 
         .chat-message {
@@ -794,11 +1050,12 @@
             padding: 5px;
             border-radius: 3px;
             background: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--ammo-brass);
         }
 
         .chat-message .player-name {
             font-weight: bold;
-            color: #f1c40f;
+            color: var(--ammo-brass);
         }
 
         .chat-message .timestamp {
@@ -821,28 +1078,33 @@
             flex: 1;
             padding: 8px 12px;
             border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid var(--steel-gray);
             background: rgba(0, 0, 0, 0.5);
-            color: white;
+            color: var(--desert-tan);
+            font-family: 'Courier New', monospace;
+            margin: 4px;
         }
 
         .chat-input:focus {
             outline: none;
-            border-color: #4a90e2;
+            border-color: var(--ammo-brass);
         }
 
         .send-chat-btn {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
-            color: white;
-            border: none;
+            background: linear-gradient(135deg, var(--military-green) 0%, var(--camo-dark) 100%);
+            color: var(--desert-tan);
+            border: 2px solid var(--ammo-brass);
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
             white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
         }
 
         .send-chat-btn:hover {
-            background: linear-gradient(45deg, #219653, #27ae60);
+            background: linear-gradient(135deg, var(--camo-light) 0%, var(--military-green) 100%);
         }
 
         @media (max-width: 768px) {
@@ -859,64 +1121,155 @@
                 align-items: center;
             }
         }
+
+        /* Special military button styles */
+        .btn-ready {
+            background: linear-gradient(135deg, var(--military-green) 0%, #1a3a1a 100%) !important;
+            border-color: #90ee90 !important;
+        }
+
+        .btn-ready:hover {
+            background: linear-gradient(135deg, var(--camo-light) 0%, var(--military-green) 100%) !important;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--blood-red) 0%, #6b0000 100%) !important;
+            border-color: #ff4444 !important;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #9b0000 0%, var(--blood-red) 100%) !important;
+        }
+
+        .battle-reward-notification {
+            background: linear-gradient(135deg, rgba(181, 166, 66, 0.3), rgba(139, 0, 0, 0.3));
+            border: 2px solid var(--ammo-brass);
+            color: var(--desert-tan);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .attacker-reward {
+            color: var(--ammo-brass);
+            font-weight: bold;
+        }
+
+        .defender-reward {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .battle-result {
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--blood-red);
+        }
+
+        /* Different border colors for attack vs defense results */
+        .attack-victory {
+            border-left-color: var(--ammo-brass);
+        }
+
+        .defense-victory {
+            border-left-color: #3498db;
+        }
+
+        .battle-log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 5px;
+            margin: 8px 0;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 4px;
+            border-left: 2px solid rgba(181, 166, 66, 0.5);
+        }
+
+        .battle-log h4 {
+            margin: 0 0 5px 0;
+            color: var(--ammo-brass);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body class="no-select">
+    <div class="military-overlay"></div>
+    <div class="radiation-symbol rad1">☢</div>
+    <div class="radiation-symbol rad2">☢</div>
+    
     <!-- Multiplayer Lobby -->
     <div class="multiplayer-lobby" id="multiplayer-lobby">
+        
         <div class="lobby-container">
-            <h2>World Domination - Multiplayer</h2>
+            <header>
+                <h1>WORLD DOMINATION</h1>
+                <p>GLOBAL STRATEGIC COMMAND CENTER</p>
+            </header>
             
             <div class="game-mode-selection">
-                <button id="play-local" class="mode-btn active">Play Locally</button>
-                <button id="play-online" class="mode-btn">Play Online</button>
+                <button id="play-local" class="mode-btn active">⚔️ LOCAL DEPLOYMENT</button>
+                <button id="play-online" class="mode-btn">🛰️ NETWORK OPERATIONS</button>
             </div>
+            
+            <div class="warning-stripe"></div>
             
             <div class="online-section" id="online-section" style="display: none;">
                 <div class="server-status" id="server-status">
-                    <span class="status-offline">●</span> Disconnected
+                    <span class="status-offline">●</span> COMMS: DISCONNECTED
                 </div>
                 
                 <div class="player-info-lobby">
-                    <label for="player-name">Your Name:</label>
-                    <input type="text" id="player-name" value="Player" maxlength="20">
+                    <label for="player-name">CALLSIGN:</label>
+                    <input type="text" id="player-name" value="OPERATOR" maxlength="20">
                 </div>
                 
                 <div class="lobby-actions">
                     <div class="create-room">
-                        <h3>Create Room</h3>
-                        <input type="text" id="room-name" placeholder="Room Name" value="World Domination">
-                        <button id="create-room-btn">Create Room</button>
+                        <h3>CREATE MISSION</h3>
+                        <input type="text" id="room-name" placeholder="MISSION DESIGNATION" value="OPERATION THUNDER">
+                        <button id="create-room-btn">INITIATE MISSION</button>
                     </div>
                     
                     <div class="join-room">
-                        <h3>Available Rooms</h3>
-                        <button id="refresh-rooms" style="padding: 5px 10px; font-size: 0.8rem;">Refresh</button>
+                        <h3>ACTIVE THEATERS</h3>
+                        <button id="refresh-rooms" style="padding: 5px 10px; font-size: 0.8rem;">🔄 SCAN</button>
                         <div id="rooms-list" class="rooms-list">
-                            <div class="no-rooms">No rooms available. Create one!</div>
+                            <div class="no-rooms">NO ACTIVE THEATERS DETECTED</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="current-room" id="current-room" style="display: none;">
-                    <h3>Room: <span id="room-name-display"></span></h3>
+                    <h3>ACTIVE MISSION: <span id="room-name-display"></span></h3>
                     <div class="room-info">
-                        <div>Room ID: <code id="room-id-display"></code></div>
-                        <div>Players: <span id="room-player-count">0</span></div>
+                        <div>MISSION ID: <code id="room-id-display"></code></div>
+                        <div>OPERATORS: <span id="room-player-count">0</span></div>
                     </div>
                     <div id="room-players" class="room-players">
                         <!-- Players will be listed here -->
                     </div>
                     <div class="room-actions">
-                        <button id="leave-room">Leave Room</button>
-                        <button id="start-game-btn" class="primary">Start Game</button>
+                        <button id="leave-room" class="btn-danger">ABORT MISSION</button>
+                        <button id="start-game-btn" class="primary">ENGAGE ENEMY</button>
                     </div>
                 </div>
             </div>
             
             <div class="local-section" id="local-section">
                 <div class="player-setup" id="player-setup">
-                    <h3>Select Number of Players</h3>
+                    <h3>SELECT COMMANDER COUNT</h3>
                     <div class="player-count-buttons-lobby">
                         <button data-players="2">2</button>
                         <button data-players="3">3</button>
@@ -924,7 +1277,7 @@
                         <button data-players="5">5</button>
                         <button data-players="6">6</button>
                     </div><br />
-                    <button id="start-local-game" class="primary">Start Local Game</button>
+                    <button id="start-local-game" class="primary">DEPLOY FORCES</button>
                 </div>
             </div>
         </div>
@@ -932,8 +1285,9 @@
 
     <div class="container">
         <header>
-            <h1>World Domination</h1>
-            <p>Conquer the world territory by territory!</p>
+            <h1>WORLD DOMINATION</h1>
+            <p>GLOBAL STRATEGIC COMMAND - ESTABLISH BATTLEFIELD DOMINANCE</p>
+            <div class="warning-stripe"></div>
         </header>
         
         <div class="game-info" id="game-info" style="display: none;">
@@ -941,7 +1295,7 @@
                 <!-- Player cards will be generated here -->
             </div>
             
-            <div class="phase-indicator" id="phase-indicator" style="display:none;">Reinforce Phase</div>
+            <div class="phase-indicator" id="phase-indicator" style="display:none;">REINFORCE PHASE</div>
             
         </div>
         
@@ -954,20 +1308,28 @@
             
             <div class="controls">
                 <div class="phase-controls" id="reinforce-controls">
-                    <h3>Reinforce Phase</h3>
-                    <p>Click on any territory you own to add 1 troop</p><br />
-                    <p><b>Reinforcements: <span id="reinforce-count">3</span></b></p><br />
+                    <h3>REINFORCE PHASE</h3>
+                    <p>CLICK ON ANY TERRITORY YOU CONTROL TO DEPLOY ADDITIONAL FORCES</p><br />
+                    <p><b>REINFORCEMENTS AVAILABLE: <span id="reinforce-count">3</span></b></p>
                     
-                    <button id="end-reinforce">End Reinforce Phase</button>
+                    <!-- Add battle rewards display -->
+                    <div id="battle-rewards-section" style="display: none; background: rgba(181, 166, 66, 0.2); padding: 10px; border-radius: 5px; margin: 10px 0; border: 1px solid var(--ammo-brass);">
+                        <h4>🎖️ BATTLE REWARDS</h4>
+                        <p>You have <span id="battle-rewards-count">0</span> reinforcement(s) from victorious battles!</p>
+                        <button id="use-battle-rewards" style="background: linear-gradient(135deg, var(--ammo-brass), #e67e22);">USE BATTLE REWARDS</button>
+                    </div>
+                    
+                    <br />
+                    <button id="end-reinforce">END REINFORCE PHASE</button>
                 </div>
                 
                 <div class="phase-controls" id="attack-controls" style="display: none;">
-                    <h3>Attack Phase</h3>
-                    <p>Click your territory to attack from, then an enemy territory to attack.</p><br />
+                    <h3>ATTACK PHASE</h3>
+                    <p>SELECT YOUR TERRITORY AS ATTACK ORIGIN, THEN ENEMY TERRITORY AS TARGET.</p><br />
 
                     <div id="attack-info"></div><br />
                     <div class="troop-selection" id="attack-troop-selection" style="display: none;">
-                        <h4>Select Troops to Attack With:</h4>
+                        <h4>SELECT ASSAULT FORCE SIZE:</h4>
                         <div class="troop-buttons">
                             <button class="troop-btn" data-troops="1">1</button>
                             <button class="troop-btn" data-troops="2">2</button>
@@ -976,19 +1338,19 @@
                             <button class="troop-btn" data-troops="5">5</button>
                         </div>
                         <input type="range" min="1" max="5" value="3" class="troop-slider" id="attack-troop-slider">
-                        <div>Attacking with: <span id="attack-troop-count">3</span> troops</div>
+                        <div>ASSAULT FORCE: <span id="attack-troop-count">3</span> UNITS</div>
                     </div>
-                    <button id="execute-attack">Execute Attack</button>
-                    <button id="end-attack">End Attack Phase</button>
+                    <button id="execute-attack">EXECUTE ASSAULT</button>
+                    <button id="end-attack">END ATTACK PHASE</button>
                 </div>
                 
                 <div class="phase-controls" id="fortify-controls" style="display: none;">
-                    <h3>Fortify Phase</h3>
-                    <p>Click your territory to move from, then another to move to.</p><br />
+                    <h3>FORTIFY PHASE</h3>
+                    <p>REDEPLOY FORCES BETWEEN CONNECTED TERRITORIES UNDER YOUR COMMAND.</p><br />
                     
                     <div id="fortify-info"></div><br />
                     <div class="troop-selection" id="fortify-troop-selection" style="display: none;">
-                        <h4>Select Troops to Move:</h4>
+                        <h4>SELECT TRANSFER FORCE SIZE:</h4>
                         <div class="troop-buttons">
                             <button class="troop-btn" data-troops="1">1</button>
                             <button class="troop-btn" data-troops="2">2</button>
@@ -997,62 +1359,62 @@
                             <button class="troop-btn" data-troops="5">5</button>
                         </div>
                         <input type="range" min="1" max="5" value="1" class="troop-slider" id="fortify-troop-slider">
-                        <div>Moving: <span id="fortify-troop-count">1</span> troops</div>
+                        <div>TRANSFER FORCE: <span id="fortify-troop-count">1</span> UNITS</div>
                     </div>
-                    <button id="move-troops">Move Troops</button>
-                    <button id="end-fortify">End Turn</button>
+                    <button id="move-troops">EXECUTE TRANSFER</button>
+                    <button id="end-fortify">END TURN</button>
                 </div>
 
                 <div class="territory-info">
-                    <h3>Selected Territory</h3>
-                    <div id="territory-details">No territory selected</div>
+                    <h3>TACTICAL OVERVIEW</h3>
+                    <div id="territory-details">NO TERRITORY SELECTED</div>
                 </div>
                 
                 <div id="battle-results"></div>
 
                 <!-- Chat Container -->
                 <div class="chat-container" id="chat-container">
-                    <h3>Game Chat</h3>
+                    <h3>COMMUNICATIONS CHANNEL</h3>
                     <div class="chat-messages" id="chat-messages">
                         <!-- Messages will be populated dynamically -->
                     </div>
                     <div class="chat-input-container">
-                        <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." maxlength="200">
-                        <button class="send-chat-btn" id="send-chat">Send</button>
+                        <input type="text" class="chat-input" id="chat-input" placeholder="TRANSMIT MESSAGE..." maxlength="200">
+                        <button class="send-chat-btn" id="send-chat">SEND</button>
                     </div>
                 </div>
 
-                <button id="leave-game-btn" style="background: linear-gradient(45deg, #e74c3c, #c0392b); margin-top: 10px;">Leave Game</button>
+                <button id="leave-game-btn" class="btn-danger" style="margin-top: 10px;">ABORT MISSION</button>
 
             </div>
         </div>
         
         <div class="instructions" id="instructions" style="display: none;">
-            <h3>How to Play:</h3>
+            <h3>FIELD MANUAL - STRATEGIC OPERATIONS:</h3>
             <ul>
-                <li><strong>Reinforce:</strong> Click on your territories to add troops</li>
-                <li><strong>Attack:</strong> Click your territory, then enemy territory to attack</li>
-                <li><strong>Fortify:</strong> Click your territory, then another to move troops</li>
-                <li>Control entire regions for bonus reinforcements</li>
-                <li>Click any territory to select/deselect</li>
-                <li>Eliminate all opponents to win the game!</li>
+                <li><strong>REINFORCE:</strong> DEPLOY ADDITIONAL FORCES TO YOUR CONTROLLED TERRITORIES</li>
+                <li><strong>ATTACK:</strong> LAUNCH ASSAULTS FROM YOUR TERRITORIES TO ADJACENT ENEMY POSITIONS</li>
+                <li><strong>FORTIFY:</strong> REDEPLOY FORCES BETWEEN CONNECTED FRIENDLY TERRITORIES</li>
+                <li>SECURE ENTIRE REGIONS FOR BONUS REINFORCEMENTS</li>
+                <li>CLICK ANY TERRITORY FOR TACTICAL INTELLIGENCE</li>
+                <li>ELIMINATE ALL OPPOSING COMMANDERS TO ACHIEVE TOTAL DOMINATION</li>
             </ul>
         </div>
         
         <footer id="footer" style="display: none;">
-            <p>World Domination Game - Enhanced with Region Bonuses and Troop Selection</p>
+            <p>WORLD DOMINATION - GLOBAL STRATEGIC COMMAND SYSTEM | CLASSIFIED: LEVEL ALPHA</p>
         </footer>
     </div>
 
     <div class="notification" id="notification">
-        <div id="notification-text">Notification message</div>
+        <div id="notification-text">COMMAND: AWAITING ORDERS</div>
     </div>
 
     <div class="victory-screen" id="victory-screen">
-        <div class="victory-title">VICTORY!</div>
-        <div class="victory-player" id="victory-player">Player 1 Wins!</div>
-        <div class="victory-message" id="victory-message">Congratulations! You have conquered the world!</div>
-        <button id="play-again">Play Again</button>
+        <div class="victory-title">TOTAL VICTORY ACHIEVED</div>
+        <div class="victory-player" id="victory-player">COMMANDER VICTORIOUS!</div>
+        <div class="victory-message" id="victory-message">GLOBAL DOMINATION SECURED - ENEMY FORCES NEUTRALIZED</div>
+        <button id="play-again" class="primary">INITIATE NEW CAMPAIGN</button>
     </div>
 
     <script src="socket.io/socket.io.js"></script>
@@ -1086,6 +1448,7 @@
                 "Asia": 7,
                 "Australia": 2
             },
+            battleRewards: 0,
             playerCount: 2,
             gameOver: false,
             isMultiplayer: false,
@@ -1180,7 +1543,7 @@
             setupPlayerSelection();
             setupEventListeners();
             setupChatEventListeners();
-            showNotification("Welcome to World Domination! Choose your game mode.");
+            showNotification("COMMAND: WELCOME TO WORLD DOMINATION! SELECT YOUR OPERATION MODE.");
         }
 
         // Game mode selection
@@ -1236,23 +1599,28 @@
 
         // Multiplayer functionality
         function initializeMultiplayer() {
-            // Connect to server
-            //socket = io();
-            socket = io({
-                path: '/world-domination/socket.io'
-            });
             
+            // Connect to server
+            if(window.location.hostname !== 'localhost') {
+                socket = io({
+                    path: '/world-domination/socket.io'
+                });
+            }
+            else {
+                socket = io();
+            }
+                  
             // Update server status
-            updateServerStatus('Connecting...', 'connecting');
+            updateServerStatus('CONNECTING...', 'connecting');
             
             socket.on('connect', () => {
-                updateServerStatus('Connected', 'online');
+                updateServerStatus('CONNECTED', 'online');
                 setupPlayerNameAutoUpdate();
                 console.log('Connected to server, waiting for rooms...');
             });
             
             socket.on('disconnect', () => {
-                updateServerStatus('Disconnected', 'offline');
+                updateServerStatus('DISCONNECTED', 'offline');
             });
             
             // Store player ID
@@ -1263,7 +1631,7 @@
             
             // Handle rooms list updates
             socket.on('rooms-list', (rooms) => {
-                console.log('Received rooms list:', rooms);
+                //console.log('Received rooms list:', rooms);
                 updateRoomsList(rooms);
             });
             
@@ -1285,7 +1653,7 @@
             
             // Handle room updates
             socket.on('room-updated', (room) => {
-                console.log('Room updated:', room);
+                //console.log('Room updated:', room);
                 updateRoomDisplay(room);
                 gameState.isHost = room.host === playerId;
                 
@@ -1299,7 +1667,10 @@
             // Handle join errors with better feedback
             socket.on('join-error', (message) => {
                 console.log('Join error:', message);
-                showNotification(`Error: ${message}`);
+                showNotification(`COMMAND ERROR: ${message}`);
+                
+                // Refresh rooms list to get current state
+                refreshRoomsList();
             });
             
             // Handle game start
@@ -1319,12 +1690,12 @@
             
             // Handle player leaving during game
             socket.on('player-left', (data) => {
-                showNotification(`${data.playerName} has left the game`);
+                showNotification(`${data.playerName} HAS LEFT THE BATTLEFIELD`);
             });
 
             // Add handler for when we successfully leave a game
             socket.on('game-left', () => {
-                showNotification('You left the game');
+                showNotification('COMMAND: MISSION ABORTED');
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
@@ -1332,12 +1703,12 @@
 
             // Add handler for when other players leave the game
             socket.on('player-left-game', (data) => {
-                showNotification(`${data.playerName} left the game`);
+                showNotification(`${data.playerName} LEFT THE BATTLEFIELD`);
             });
                         
             // Handle join errors
             socket.on('join-error', (message) => {
-                showNotification(`Error: ${message}`);
+                showNotification(`COMMAND ERROR: ${message}`);
             });
             
             // Handle chat messages
@@ -1359,8 +1730,8 @@
                     addChatMessage({
                         id: 'default-welcome',
                         playerId: 'system',
-                        playerName: 'System',
-                        message: 'Welcome to the game chat!',
+                        playerName: 'COMMAND',
+                        message: 'COMMS CHANNEL ACTIVE - ALL FREQUENCIES CLEAR',
                         timestamp: new Date().toISOString()
                     });
                 }
@@ -1404,7 +1775,7 @@
             const roomName = document.getElementById('room-name').value;
             
             if (roomName.trim() === '') {
-                showNotification('Please enter a room name');
+                showNotification('COMMAND: ENTER MISSION DESIGNATION');
                 return;
             }
             
@@ -1415,6 +1786,22 @@
         }
 
         function joinRoom(roomId) {
+            console.log('Attempting to join room:', roomId);
+            
+            // Show loading state
+            const joinButton = document.querySelector(`[data-room-id="${roomId}"]`);
+            if (joinButton) {
+                const originalText = joinButton.textContent;
+                joinButton.textContent = 'JOINING...';
+                joinButton.disabled = true;
+                
+                // Revert button after 2 seconds
+                setTimeout(() => {
+                    joinButton.textContent = originalText;
+                    joinButton.disabled = false;
+                }, 2000);
+            }
+            
             socket.emit('join-room', roomId);
         }
 
@@ -1432,10 +1819,10 @@
         function updateRoomsList(rooms) {
             const roomsList = document.getElementById('rooms-list');
             
-            console.log('Updating rooms list with:', rooms);
+            //console.log('Updating rooms list with:', rooms);
             
             if (!rooms || rooms.length === 0) {
-                roomsList.innerHTML = '<div class="no-rooms">No rooms available. Create one!</div>';
+                roomsList.innerHTML = '<div class="no-rooms">NO ACTIVE THEATERS DETECTED</div>';
                 return;
             }
             
@@ -1448,10 +1835,10 @@
                     <div class="room-item-info">
                         <div class="room-item-name">${room.name}</div>
                         <div class="room-item-details">
-                            Players: ${room.players}/${room.maxPlayers} | Host: ${room.host}
+                            OPERATORS: ${room.players}/${room.maxPlayers} | COMMAND: ${room.host}
                         </div>
                     </div>
-                    <button class="join-room-btn" data-room-id="${room.id}">Join</button>
+                    <button class="join-room-btn" data-room-id="${room.id}">JOIN</button>
                 `;
                 
                 roomsList.appendChild(roomElement);
@@ -1502,7 +1889,7 @@
                 playerElement.innerHTML = `
                     <div class="player-color-indicator" style="background-color: ${playerColors[index]}"></div>
                     <span>${player.name}</span>
-                    ${player.id === room.host ? '<span class="host-indicator">★ Host</span>' : ''}
+                    ${player.id === room.host ? '<span class="host-indicator">★ COMMAND</span>' : ''}
                 `;
                 
                 playersList.appendChild(playerElement);
@@ -1532,6 +1919,10 @@
         }
 
         function startGameCommon() {
+
+            // Play intro
+            playSound('splash');
+
             // Show game elements
             document.getElementById('game-info').style.display = 'flex';
             document.getElementById('game-area').style.display = 'flex';
@@ -1545,7 +1936,6 @@
             if (!gameState.isMultiplayer) {
                 initializePlayers();
                 initializeTerritories();
-                //createPlayerCards(); // Create cards for local game
             }
             
             // Update UI
@@ -1554,9 +1944,9 @@
             // Show welcome notification
             const playerName = gameState.isMultiplayer ? 
                 gameState.players[gameState.currentPlayer].name : 
-                `Player ${gameState.currentPlayer + 1}`;
+                `OPERATOR ${gameState.currentPlayer + 1}`;
             
-            showNotification(`Game started! ${playerName} begins.`);
+            showNotification(`COMMAND: MISSION INITIATED! ${playerName} TAKES COMMAND.`);
         }
 
         // Initialize players based on selected count
@@ -1566,7 +1956,7 @@
             for (let i = 0; i < gameState.playerCount; i++) {
                 gameState.players.push({
                     id: i,
-                    name: `Player ${i + 1}`,
+                    name: `COMMANDER ${i + 1}`,
                     color: playerColors[i],
                     territories: [],
                     reinforcements: 3,
@@ -1605,8 +1995,8 @@
                 card.innerHTML = `
                     <div class="player-color" style="background-color: ${playerColor}"></div>
                     <div>
-                        <div>${player.name} ${isInactive ? '(Left)' : ''}</div>
-                        <div id="player${index + 1}-territories">${player.territories ? player.territories.length : 0} territories</div>
+                        <div>${player.name} ${isInactive ? '(NEUTRALIZED)' : ''}</div> 
+                        <div id="player${index + 1}-territories">${player.territories ? player.territories.length : 0} TERRITORIES</div>
                     </div>
                 `;
                 
@@ -1721,7 +2111,7 @@
                 bonus.setAttribute("text-anchor", "middle");
                 bonus.setAttribute("font-size", "10");
                 bonus.setAttribute("fill", "rgba(255,255,255,0.6)");
-                bonus.textContent = `+${gameState.regionBonuses[region]} troops`;
+                bonus.textContent = `+${gameState.regionBonuses[region]} TROOPS`;
                 svg.appendChild(bonus);
             });
         }
@@ -1797,7 +2187,7 @@
                 console.log('Current: ' + gameState.currentPlayer);
                 const currentPlayerObj = gameState.players[gameState.currentPlayer];
                 if (currentPlayerObj.id !== playerId) {
-                    showNotification("It's not your turn!");
+                    showNotification("COMMAND: AWAITING ORDERS FROM ACTIVE COMMANDER");
                     return;
                 }
                 
@@ -1827,19 +2217,22 @@
             
             // Don't allow actions if we're inactive
             if (myPlayerIndex === -1 || !myPlayer.active) {
-                showNotification("You are no longer in the game");
+                playSound('error');
+                showNotification("COMMAND: OPERATOR NO LONGER ACTIVE");
                 return;
             }
             
             // Don't allow actions if it's not our turn
             if (currentPlayerObj.id !== playerId) {
-                showNotification("It's not your turn!");
+                playSound('error');
+                showNotification("COMMAND: AWAITING ORDERS FROM ACTIVE COMMANDER");
                 return;
             }
             
             // Additional validation
             if (gameState.players[gameState.currentPlayer].id !== playerId) {
-                showNotification("It's not your turn! Please wait.");
+                playSound('error');
+                showNotification("COMMAND: AWAITING ORDERS FROM ACTIVE COMMANDER");
                 return;
             }
             
@@ -1849,10 +2242,14 @@
                     if (territory.owner === gameState.currentPlayer && 
                         gameState.players[gameState.currentPlayer].reinforcements > 0) {
                         
+                        playSound('reinforce');
                         socket.emit('game-action', {
                             type: 'reinforce',
                             territoryId: territory.id
                         });
+                    }
+                    else {
+                        playSound('error');
                     }
                     break;
                     
@@ -1879,7 +2276,7 @@
                 // Play reinforce sound
                 playSound('reinforce');
                 
-                showNotification(`Reinforced ${territory.name} with 1 troop`);
+                showNotification(`COMMAND: REINFORCED ${territory.name} WITH 1 UNIT`);
             }
             else {
                 playSound('error');
@@ -1897,7 +2294,7 @@
             if (!gameState.attackSource && territory.owner === gameState.currentPlayer && territory.troops > 1) {
                 gameState.attackSource = territory;
                 gameState.attackTroops = Math.min(3, territory.troops - 1);
-                showNotification(`Selected ${territory.name} as attack source. Now select an enemy territory to attack.`);
+                showNotification(`COMMAND: SELECTED ${territory.name} AS ASSAULT ORIGIN. SELECT ENEMY TERRITORY TO ENGAGE.`);
                 document.getElementById('attack-troop-selection').style.display = 'block';
                 updateTroopSelection('attack');
             }
@@ -1906,14 +2303,14 @@
                      territory.owner !== gameState.currentPlayer && 
                      gameState.attackSource.connections.includes(territory.id)) {
                 gameState.attackTarget = territory;
-                showNotification(`Ready to attack ${territory.name} from ${gameState.attackSource.name}. Click "Execute Attack" to battle.`);
+                showNotification(`COMMAND: READY TO ASSAULT ${territory.name} FROM ${gameState.attackSource.name}. EXECUTE ASSAULT TO ENGAGE.`);
             }
             // If clicked on a different own territory, change source
             else if (territory.owner === gameState.currentPlayer && territory.troops > 1) {
                 gameState.attackSource = territory;
                 gameState.attackTarget = null;
                 gameState.attackTroops = Math.min(3, territory.troops - 1);
-                showNotification(`Selected ${territory.name} as attack source. Now select an enemy territory to attack.`);
+                showNotification(`COMMAND: SELECTED ${territory.name} AS ASSAULT ORIGIN. SELECT ENEMY TERRITORY TO ENGAGE.`);
                 document.getElementById('attack-troop-selection').style.display = 'block';
                 updateTroopSelection('attack');
             }
@@ -1922,7 +2319,7 @@
                 gameState.attackSource = null;
                 gameState.attackTarget = null;
                 document.getElementById('attack-troop-selection').style.display = 'none';
-                showNotification("Attack selection cleared. Select your territory to attack from.");
+                showNotification("COMMAND: ASSAULT SELECTION CLEARED. SELECT YOUR TERRITORY TO ATTACK FROM.");
             }
             
             // Update selection highlighting
@@ -1935,20 +2332,20 @@
             if (!gameState.attackSource && territory.owner === gameState.currentPlayer && territory.troops > 1) {
                 gameState.attackSource = territory;
                 gameState.attackTroops = Math.min(3, territory.troops - 1);
-                showNotification(`Selected ${territory.name} as attack source. Now select an enemy territory to attack.`);
+                showNotification(`COMMAND: SELECTED ${territory.name} AS ASSAULT ORIGIN. SELECT ENEMY TERRITORY TO ENGAGE.`);
                 updateTroopSelection('attack');
             }
             else if (gameState.attackSource && 
                     territory.owner !== gameState.currentPlayer && 
                     gameState.attackSource.connections.includes(territory.id)) {
                 gameState.attackTarget = territory;
-                showNotification(`Ready to attack ${territory.name}. Click "Execute Attack" to battle.`);
+                showNotification(`COMMAND: READY TO ASSAULT ${territory.name}. EXECUTE ASSAULT TO ENGAGE.`);
             }
             else if (territory.owner === gameState.currentPlayer && territory.troops > 1) {
                 gameState.attackSource = territory;
                 gameState.attackTarget = null;
                 gameState.attackTroops = Math.min(3, territory.troops - 1);
-                showNotification(`Selected ${territory.name} as attack source. Now select an enemy territory to attack.`);
+                showNotification(`COMMAND: SELECTED ${territory.name} AS ASSAULT ORIGIN. SELECT ENEMY TERRITORY TO ENGAGE.`);
                 updateTroopSelection('attack');
             }
             else {
@@ -1956,7 +2353,7 @@
                 gameState.attackTarget = null;
                 gameState.attackTroops = 3; // Reset to default
                 document.getElementById('attack-troop-selection').style.display = 'none';
-                showNotification("Attack selection cleared.");
+                showNotification("COMMAND: ASSAULT SELECTION CLEARED.");
             }
             
             updateSelectionHighlighting();
@@ -1972,7 +2369,7 @@
                 if (!gameState.fortifySource) {
                     gameState.fortifySource = territory;
                     gameState.fortifyTroops = 1;
-                    showNotification(`Selected ${territory.name} to move troops from. Now select a connected territory to move to.`);
+                    showNotification(`COMMAND: SELECTED ${territory.name} TO TRANSFER FORCES FROM. SELECT CONNECTED TERRITORY TO TRANSFER TO.`);
                     document.getElementById('fortify-troop-selection').style.display = 'block';
                     updateTroopSelection('fortify');
                 }
@@ -1980,14 +2377,14 @@
                 else if (gameState.fortifySource.id !== territory.id && 
                          areTerritoriesConnected(gameState.fortifySource.id, territory.id, gameState.currentPlayer)) {
                     gameState.fortifyTarget = territory;
-                    showNotification(`Ready to move troops from ${gameState.fortifySource.name} to ${territory.name}. Click "Move Troops" to transfer.`);
+                    showNotification(`COMMAND: READY TO TRANSFER FORCES FROM ${gameState.fortifySource.name} TO ${territory.name}. EXECUTE TRANSFER TO REDEPLOY.`);
                 }
                 // If clicked on a different own territory, change source
                 else if (gameState.fortifySource.id !== territory.id) {
                     gameState.fortifySource = territory;
                     gameState.fortifyTarget = null;
                     gameState.fortifyTroops = 1;
-                    showNotification(`Selected ${territory.name} to move troops from. Now select a connected territory to move to.`);
+                    showNotification(`COMMAND: SELECTED ${territory.name} TO TRANSFER FORCES FROM. SELECT CONNECTED TERRITORY TO TRANSFER TO.`);
                     document.getElementById('fortify-troop-selection').style.display = 'block';
                     updateTroopSelection('fortify');
                 }
@@ -1996,7 +2393,7 @@
                     gameState.fortifySource = null;
                     gameState.fortifyTarget = null;
                     document.getElementById('fortify-troop-selection').style.display = 'none';
-                    showNotification("Fortify selection cleared. Select your territory to move troops from.");
+                    showNotification("COMMAND: TRANSFER SELECTION CLEARED. SELECT YOUR TERRITORY TO TRANSFER FORCES FROM.");
                 }
             }
             // If clicked on any other territory, clear selections
@@ -2004,7 +2401,7 @@
                 gameState.fortifySource = null;
                 gameState.fortifyTarget = null;
                 document.getElementById('fortify-troop-selection').style.display = 'none';
-                showNotification("Fortify selection cleared. Select your territory to move troops from.");
+                showNotification("COMMAND: TRANSFER SELECTION CLEARED. SELECT YOUR TERRITORY TO TRANSFER FORCES FROM.");
             }
             
             // Update selection highlighting
@@ -2018,19 +2415,19 @@
                 if (!gameState.fortifySource) {
                     gameState.fortifySource = territory;
                     gameState.fortifyTroops = 1;
-                    showNotification(`Selected ${territory.name} to move troops from. Now select a connected territory to move to.`);
+                    showNotification(`COMMAND: SELECTED ${territory.name} TO TRANSFER FORCES FROM. SELECT CONNECTED TERRITORY TO TRANSFER TO.`);
                     updateTroopSelection('fortify');
                 }
                 else if (gameState.fortifySource.id !== territory.id && 
                         areTerritoriesConnected(gameState.fortifySource.id, territory.id, gameState.currentPlayer)) {
                     gameState.fortifyTarget = territory;
-                    showNotification(`Ready to move troops from ${gameState.fortifySource.name} to ${territory.name}. Click "Move Troops" to transfer.`);
+                    showNotification(`COMMAND: READY TO TRANSFER FORCES FROM ${gameState.fortifySource.name} TO ${territory.name}. EXECUTE TRANSFER TO REDEPLOY.`);
                 }
                 else if (gameState.fortifySource.id !== territory.id) {
                     gameState.fortifySource = territory;
                     gameState.fortifyTarget = null;
                     gameState.fortifyTroops = 1;
-                    showNotification(`Selected ${territory.name} to move troops from. Now select a connected territory to move to.`);
+                    showNotification(`COMMAND: SELECTED ${territory.name} TO TRANSFER FORCES FROM. SELECT CONNECTED TERRITORY TO TRANSFER TO.`);
                     updateTroopSelection('fortify');
                 }
                 else {
@@ -2038,7 +2435,7 @@
                     gameState.fortifyTarget = null;
                     gameState.fortifyTroops = 1; // Reset to default
                     document.getElementById('fortify-troop-selection').style.display = 'none';
-                    showNotification("Fortify selection cleared.");
+                    showNotification("COMMAND: TRANSFER SELECTION CLEARED.");
                 }
             }
             else {
@@ -2046,7 +2443,7 @@
                 gameState.fortifyTarget = null;
                 gameState.fortifyTroops = 1; // Reset to default
                 document.getElementById('fortify-troop-selection').style.display = 'none';
-                showNotification("Fortify selection cleared.");
+                showNotification("COMMAND: TRANSFER SELECTION CLEARED.");
             }
             
             updateSelectionHighlighting();
@@ -2071,9 +2468,9 @@
                     const troops = parseInt(btn.getAttribute('data-troops'));
                     btn.disabled = troops > maxTroops;
                     if (troops === gameState.attackTroops) {
-                        btn.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
+                        btn.style.background = 'linear-gradient(45deg, var(--ammo-brass), #e67e22)';
                     } else {
-                        btn.style.background = 'linear-gradient(45deg, #4a90e2, #3a7bc8)';
+                        btn.style.background = 'linear-gradient(45deg, var(--military-green), var(--camo-dark))';
                     }
                 });
                 
@@ -2097,9 +2494,9 @@
                     const troops = parseInt(btn.getAttribute('data-troops'));
                     btn.disabled = troops > maxTroops;
                     if (troops === gameState.fortifyTroops) {
-                        btn.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
+                        btn.style.background = 'linear-gradient(45deg, var(--ammo-brass), #e67e22)';
                     } else {
-                        btn.style.background = 'linear-gradient(45deg, #4a90e2, #3a7bc8)';
+                        btn.style.background = 'linear-gradient(45deg, var(--military-green), var(--camo-dark))';
                     }
                 });
                 
@@ -2111,11 +2508,13 @@
         // Execute attack
         function executeAttack() {
             if (!gameState.attackSource || !gameState.attackTarget) {
-                showNotification("Please select both attacking and defending territories.");
+                showNotification("COMMAND: SELECT BOTH ASSAULT ORIGIN AND TARGET TERRITORIES.");
+                playSound('error');
                 return;
             }
             
             if (gameState.isMultiplayer) {
+                playSound('attack');
                 socket.emit('game-action', {
                     type: 'attack',
                     source: gameState.attackSource.id,
@@ -2133,17 +2532,30 @@
                 const attacker = gameState.attackSource;
                 const defender = gameState.attackTarget;
                 const attackingTroops = gameState.attackTroops;
+                const defenderPlayer = gameState.players[defender.owner];
+                
+                // Capture initial troop counts for display
+                const initialDefenderTroops = defender.troops; // Store initial value before battle
                 
                 // Play attack sound
                 playSound('attack');
                 
-                // Simple deterministic combat - attacker needs more troops to win
-                if (attackingTroops > defender.troops) {
-                    // Attacker wins
+                // Resolve combat using improved dice-based system
+                const combatResult = resolveCombat(attackingTroops, defender.troops);
+                
+                // Calculate battle rewards
+                const attackerReward = calculateBattleReward();
+                const defenderReward = calculateBattleReward();
+                
+                if (combatResult.attackerWins) {
+                    // Attacker wins the battle
                     const previousOwner = defender.owner;
                     defender.owner = gameState.currentPlayer;
-                    defender.troops = attackingTroops; // Move attacking troops to conquered territory
-                    attacker.troops -= attackingTroops;
+                    
+                    // Update troop counts based on combat result
+                    // Attacker loses the original attacking troops but gains the survivors in the conquered territory
+                    attacker.troops -= attackingTroops; // Remove original attacking troops from source
+                    defender.troops = combatResult.attackerRemaining; // Surviving troops move into conquered territory
                     
                     // Update player territory lists
                     if (previousOwner !== gameState.currentPlayer) {
@@ -2153,39 +2565,58 @@
                         
                         gameState.players[gameState.currentPlayer].territories.push(defender.id);
                         
+                        // Award battle reward to the attacker
+                        gameState.players[gameState.currentPlayer].battleRewards = 
+                            (gameState.players[gameState.currentPlayer].battleRewards || 0) + attackerReward;
+                        
                         // Check if previous player has been eliminated
                         if (prevPlayer.territories.length === 0) {
                             prevPlayer.active = false;
-                            showNotification(`${prevPlayer.name} has been eliminated!`);
+                            showNotification(`${prevPlayer.name} HAS BEEN NEUTRALIZED!`);
                         }
                     }
                     
-                    // Show battle results
+                    // Show detailed battle results - FIXED: use initialDefenderTroops
                     document.getElementById('battle-results').innerHTML = `
-                        <div class="battle-result">
-                            <h3>Battle Results</h3>
-                            <p>${attacker.name} conquered ${defender.name}!</p>
-                            <p>${defender.name} now has ${defender.troops} troops</p>
+                        <div class="battle-result attack-victory">
+                            <h3>BATTLE ASSESSMENT - VICTORY</h3>
+                            <p><strong>${attacker.name}</strong> conquered <strong>${defender.name}</strong>!</p>
+                            <p>Surviving attacking force: ${combatResult.attackerRemaining} units</p>
+                            <p>Defender eliminated: ${initialDefenderTroops} units lost</p>
+                            <div class="battle-log">
+                                <h4>BATTLE LOG:</h4>
+                                ${combatResult.battleLog.map(log => `<div class="log-entry">${log}</div>`).join('')}
+                            </div>
+                            <p class="attacker-reward">🎖️ ATTACKER REWARD: +${attackerReward} REINFORCEMENT(S)</p>
                         </div>
                     `;
                     
-                    showNotification(`Victory! ${attacker.name} conquered ${defender.name}`);
+                    showNotification(`VICTORY! ${attacker.name} CONQUERED ${defender.name} AND EARNED ${attackerReward} BATTLE REWARD(S)!`);
                 } else {
-                    // Defender wins
-                    defender.troops -= Math.floor(defender.troops / 2); // Defender loses half troops
-                    attacker.troops -= attackingTroops; // Attacker loses all attacking troops
+                    // Defender wins the battle
+                    // Attacker loses all attacking troops, defender keeps survivors
+                    attacker.troops -= attackingTroops; // Remove all attacking troops
+                    defender.troops = combatResult.defenderRemaining; // Defender keeps surviving troops
                     
-                    // Show battle results
+                    // Award battle reward to the defender
+                    defenderPlayer.battleRewards = (defenderPlayer.battleRewards || 0) + defenderReward;
+                    
+                    // Show detailed battle results - FIXED: use attackingTroops for attacker losses
                     document.getElementById('battle-results').innerHTML = `
-                        <div class="battle-result">
-                            <h3>Battle Results</h3>
-                            <p>${defender.name} defended successfully!</p>
-                            <p>${defender.name} now has ${defender.troops} troops</p>
-                            <p>${attacker.name} lost ${attackingTroops} troops</p>
+                        <div class="battle-result defense-victory">
+                            <h3>BATTLE ASSESSMENT - DEFENSE SUCCESSFUL</h3>
+                            <p><strong>${defender.name}</strong> successfully defended against <strong>${attacker.name}</strong>!</p>
+                            <p>Attacking force eliminated: ${attackingTroops} units lost</p>
+                            <p>Defender remaining: ${combatResult.defenderRemaining} units</p>
+                            <div class="battle-log">
+                                <h4>BATTLE LOG:</h4>
+                                ${combatResult.battleLog.map(log => `<div class="log-entry">${log}</div>`).join('')}
+                            </div>
+                            <p class="defender-reward">🛡️ DEFENDER REWARD: +${defenderReward} REINFORCEMENT(S)</p>
                         </div>
                     `;
                     
-                    showNotification(`Defeat! ${defender.name} defended against your attack`);
+                    showNotification(`DEFEAT! ${defender.name} REPELLED YOUR ASSAULT AND EARNED ${defenderReward} BATTLE REWARD(S)!`);
                 }
                 
                 // Update display
@@ -2200,19 +2631,139 @@
                 // Update selection highlighting
                 updateSelectionHighlighting();
                 
+                // Update UI to show battle rewards if any were earned
+                updateUI();
+                
                 // Check for win condition
                 checkWinCondition();
             }
         }
 
-        // Move troops during fortify phase
-        function moveTroops() {
-            if (!gameState.fortifySource || !gameState.fortifyTarget) {
-                showNotification("Please select both source and target territories.");
+        // Calculate battle rewards
+        function calculateBattleReward() {
+            const random = Math.random() * 100;
+            
+            if (random < 35) return 1;      // 35% probability
+            else if (random < 60) return 2; // 25% probability
+            else if (random < 80) return 3; // 20% probability
+            else if (random < 95) return 5; // 15% probability
+            else return 10;                 // 5% probability
+        }
+
+        // Add this function to update battle rewards display
+        function updateBattleRewardsDisplay() {
+            const currentPlayer = gameState.players[gameState.currentPlayer];
+            const battleRewardsSection = document.getElementById('battle-rewards-section');
+            const battleRewardsCount = document.getElementById('battle-rewards-count');
+            
+            if (currentPlayer && currentPlayer.battleRewards > 0) {
+                battleRewardsCount.textContent = currentPlayer.battleRewards;
+                battleRewardsSection.style.display = 'block';
+            } else {
+                battleRewardsSection.style.display = 'none';
+            }
+        }
+
+        // Add the useBattleRewards function
+        function useBattleRewards() {
+            const currentPlayer = gameState.players[gameState.currentPlayer];
+            
+            if (!currentPlayer || !currentPlayer.battleRewards || currentPlayer.battleRewards <= 0) {
+                showNotification("COMMAND: NO BATTLE REWARDS AVAILABLE");
                 return;
             }
             
             if (gameState.isMultiplayer) {
+                socket.emit('game-action', {
+                    type: 'use-battle-rewards'
+                });
+            } else {
+                // Local game: convert battle rewards to reinforcements
+                currentPlayer.reinforcements += currentPlayer.battleRewards;
+                showNotification(`COMMAND: CONVERTED ${currentPlayer.battleRewards} BATTLE REWARD(S) TO REINFORCEMENTS!`);
+                currentPlayer.battleRewards = 0;
+                updateUI();
+            }
+        }
+
+        // Add dice rolling function
+        function rollDice(numberOfDice) {
+            const rolls = [];
+            for (let i = 0; i < numberOfDice; i++) {
+                rolls.push(Math.floor(Math.random() * 6) + 1);
+            }
+            return rolls.sort((a, b) => b - a); // Sort descending
+}
+
+        // Improved combat logic
+        function resolveCombat(attackerTroops, defenderTroops) {
+            
+            // Variables
+            const battleLog = [];
+
+            battleLog.push(`INITIAL FORCES: Attacker: ${attackerTroops}, Defender: ${defenderTroops}`); // FIXED: defenderTroops
+            
+            // Battle continues until one side is eliminated
+            while (attackerTroops > 0 && defenderTroops > 0) {
+                // Determine number of dice for each side
+                const attackerDice = Math.min(3, attackerTroops); // Max 3 dice, use all attacking troops
+                const defenderDice = Math.min(2, defenderTroops); // Max 2 dice
+                
+                // Roll dice
+                const attackerRolls = rollDice(attackerDice);
+                const defenderRolls = rollDice(defenderDice);
+                
+                battleLog.push(`ATTACKER rolls: [${attackerRolls.join(', ')}] (${attackerDice} dice)`);
+                battleLog.push(`DEFENDER rolls: [${defenderRolls.join(', ')}] (${defenderDice} dice)`);
+                
+                // Compare dice (number of comparisons = min number of dice)
+                const comparisons = Math.min(attackerRolls.length, defenderRolls.length);
+                let attackerLosses = 0;
+                let defenderLosses = 0;
+                
+                for (let i = 0; i < comparisons; i++) {
+                    if (attackerRolls[i] > defenderRolls[i]) {
+                        defenderLosses++;
+                        battleLog.push(`Round ${i + 1}: Attacker ${attackerRolls[i]} vs Defender ${defenderRolls[i]} -> Defender loses 1 troop`);
+                    } else {
+                        // Defender wins on ties
+                        attackerLosses++;
+                        battleLog.push(`Round ${i + 1}: Attacker ${attackerRolls[i]} vs Defender ${defenderRolls[i]} -> Attacker loses 1 troop`);
+                    }
+                }
+                
+                // Apply losses
+                attackerTroops -= attackerLosses;
+                defenderTroops -= defenderLosses;
+                
+                battleLog.push(`LOSSES: Attacker: -${attackerLosses}, Defender: -${defenderLosses}`);
+                battleLog.push(`REMAINING: Attacker: ${attackerTroops}, Defender: ${defenderTroops}`);
+                battleLog.push('---');
+                
+                // Stop if battle is over
+                if (defenderTroops <= 0 || attackerTroops <= 0) {
+                    break;
+                }
+            }
+            
+            return {
+                attackerRemaining: attackerTroops,
+                defenderRemaining: defenderTroops,
+                attackerWins: defenderTroops <= 0,
+                battleLog: battleLog
+            };
+        }
+        
+        // Move troops during fortify phase
+        function moveTroops() {
+            if (!gameState.fortifySource || !gameState.fortifyTarget) {
+                showNotification("COMMAND: SELECT BOTH SOURCE AND TARGET TERRITORIES.");
+                playSound('error');
+                return;
+            }
+            
+            if (gameState.isMultiplayer) {
+                playSound('fortify');
                 socket.emit('game-action', {
                     type: 'fortify',
                     source: gameState.fortifySource.id,
@@ -2241,7 +2792,7 @@
                     updateTerritoryDisplay(fromTerritory.id);
                     updateTerritoryDisplay(toTerritory.id);
                     
-                    showNotification(`Moved ${movingTroops} troops from ${fromTerritory.name} to ${toTerritory.name}`);
+                    showNotification(`COMMAND: TRANSFERRED ${movingTroops} UNITS FROM ${fromTerritory.name} TO ${toTerritory.name}`);
                     
                     // Clear fortify selections
                     gameState.fortifySource = null;
@@ -2251,7 +2802,7 @@
                     // Update selection highlighting
                     updateSelectionHighlighting();
                 } else {
-                    showNotification("Not enough troops to move from this territory");
+                    showNotification("COMMAND: INSUFFICIENT FORCES TO TRANSFER FROM THIS TERRITORY");
                 }
             }
         }
@@ -2338,7 +2889,7 @@
                 const cardElement = document.getElementById(`player${index + 1}-card`);
                 
                 if (territoriesElement) {
-                    territoriesElement.textContent = `${player.territories ? player.territories.length : 0} territories`;
+                    territoriesElement.textContent = `${player.territories ? player.territories.length : 0} TERRITORIES`;
                 }
                 
                 if (cardElement) {
@@ -2349,14 +2900,6 @@
                     createPlayerCards();
                 }
             });
-            
-            // Update phase indicator
-            // const phaseIndicator = document.getElementById('phase-indicator');
-            // if (phaseIndicator) {
-            //     phaseIndicator.textContent = 
-            //         `${gameState.phase.charAt(0).toUpperCase() + gameState.phase.slice(1)} Phase`;
-            //     phaseIndicator.style.display = 'block';
-            // }
             
             // Update phase controls visibility
             document.getElementById('reinforce-controls').style.display = 
@@ -2380,11 +2923,11 @@
                 const owner = gameState.players[gameState.selectedTerritory.owner];
                 territoryDetails.innerHTML = `
                     <p><strong>${gameState.selectedTerritory.name}</strong></p>
-                    <p>Owner: ${owner ? owner.name : 'Unknown'}</p>
-                    <p>Troops: ${gameState.selectedTerritory.troops}</p>
+                    <p>CONTROLLED BY: ${owner ? owner.name : 'UNKNOWN'}</p>
+                    <p>FORCES: ${gameState.selectedTerritory.troops} UNITS</p>
                 `;
             } else {
-                territoryDetails.textContent = 'No territory selected';
+                territoryDetails.textContent = 'NO TERRITORY SELECTED';
             }
             
             // Update attack info
@@ -2392,13 +2935,13 @@
             if (gameState.phase === 'attack') {
                 if (gameState.attackSource && gameState.attackTarget) {
                     attackInfo.innerHTML = `
-                        <p>Attack: ${gameState.attackSource.name} → ${gameState.attackTarget.name}</p>
-                        <p>Troops: ${gameState.attackTroops} vs ${gameState.attackTarget.troops}</p>
+                        <p>ASSAULT: ${gameState.attackSource.name} → ${gameState.attackTarget.name}</p>
+                        <p>FORCES: ${gameState.attackTroops} vs ${gameState.attackTarget.troops} UNITS</p>
                     `;
                 } else if (gameState.attackSource) {
-                    attackInfo.innerHTML = `<p>Selected: ${gameState.attackSource.name}</p>`;
+                    attackInfo.innerHTML = `<p>SELECTED: ${gameState.attackSource.name}</p>`;
                 } else {
-                    attackInfo.innerHTML = `<p>Select your territory to attack from</p>`;
+                    attackInfo.innerHTML = `<p>SELECT YOUR TERRITORY TO ATTACK FROM</p>`;
                 }
             }
             
@@ -2407,13 +2950,13 @@
             if (gameState.phase === 'fortify') {
                 if (gameState.fortifySource && gameState.fortifyTarget) {
                     fortifyInfo.innerHTML = `
-                        <p>Move: ${gameState.fortifySource.name} → ${gameState.fortifyTarget.name}</p>
-                        <p>Troops: ${gameState.fortifySource.troops} → ${gameState.fortifyTarget.troops}</p>
+                        <p>TRANSFER: ${gameState.fortifySource.name} → ${gameState.fortifyTarget.name}</p>
+                        <p>FORCES: ${gameState.fortifySource.troops} → ${gameState.fortifyTarget.troops} UNITS</p>
                     `;
                 } else if (gameState.fortifySource) {
-                    fortifyInfo.innerHTML = `<p>Selected: ${gameState.fortifySource.name}</p>`;
+                    fortifyInfo.innerHTML = `<p>SELECTED: ${gameState.fortifySource.name}</p>`;
                 } else {
-                    fortifyInfo.innerHTML = `<p>Select your territory to move from</p>`;
+                    fortifyInfo.innerHTML = `<p>SELECT YOUR TERRITORY TO TRANSFER FROM</p>`;
                 }
             }
 
@@ -2435,6 +2978,9 @@
                     document.getElementById('fortify-troop-selection').style.display = 'none';
                 }
             }
+
+            // Update battle rewards display
+            updateBattleRewardsDisplay();
             
             // Update all territory displays
             gameState.territories.forEach(territory => {
@@ -2442,6 +2988,7 @@
             });
         }
 
+        // Update game state from server
         function updateGameStateFromServer(serverGameState) {
             // Store current selections before update
             const currentSelections = {
@@ -2463,9 +3010,9 @@
             const currentPlayerObj = gameState.players[gameState.currentPlayer];
             if (previousPlayer !== gameState.currentPlayer && currentPlayerObj) {
                 if (currentPlayerObj.id === playerId) {
-                    showNotification(`Your turn! ${gameState.phase} phase`);
+                    showNotification(`COMMAND: YOUR TURN! ${gameState.phase.toUpperCase()} PHASE`);
                 } else {
-                    showNotification(`${currentPlayerObj.name}'s turn - ${gameState.phase} phase`);
+                    showNotification(`${currentPlayerObj.name}'S TURN - ${gameState.phase.toUpperCase()} PHASE`);
                 }
             }
             
@@ -2555,7 +3102,7 @@
             
             messageElement.innerHTML = `
                 <div class="message-info">
-                    <span class="player-name" style="color: ${message.playerId === 'system' ? '#f1c40f' : ''}">
+                    <span class="player-name" style="color: ${message.playerId === 'system' ? 'var(--ammo-brass)' : ''}">
                         ${message.playerName}
                     </span>
                     <span class="timestamp">${timeString}</span>
@@ -2623,9 +3170,9 @@
             const victoryPlayer = document.getElementById('victory-player');
             const victoryMessage = document.getElementById('victory-message');
             
-            victoryPlayer.textContent = `${winner.name} Wins!`;
+            victoryPlayer.textContent = `${winner.name} ACHIEVES TOTAL DOMINATION!`;
             victoryPlayer.style.color = winner.color;
-            victoryMessage.textContent = `Congratulations! ${winner.name} has conquered the world and achieved global domination!`;
+            victoryMessage.textContent = `COMMAND: GLOBAL DOMINATION SECURED! ${winner.name} HAS CONQUERED THE WORLD AND ACHIEVED TOTAL STRATEGIC SUPREMACY!`;
             
             victoryScreen.classList.add('show');
             
@@ -2638,20 +3185,24 @@
         }
 
         function showMultiplayerVictory(winnerIndex, winnerName, reason = '') {
+            
+            // Play victory sound
+            playSound('victory');
+            
             const victoryScreen = document.getElementById('victory-screen');
             const victoryPlayer = document.getElementById('victory-player');
             const victoryMessage = document.getElementById('victory-message');
             
-            victoryPlayer.textContent = `${winnerName} Wins!`;
+            victoryPlayer.textContent = `${winnerName} ACHIEVES TOTAL DOMINATION!`;
             
             if (winnerIndex >= 0 && gameState.players[winnerIndex]) {
                 victoryPlayer.style.color = gameState.players[winnerIndex].color;
             }
             
             if (reason) {
-                victoryMessage.textContent = `Congratulations! ${winnerName} has conquered the world! (${reason})`;
+                victoryMessage.textContent = `COMMAND: GLOBAL DOMINATION SECURED! ${winnerName} HAS CONQUERED THE WORLD! (${reason})`;
             } else {
-                victoryMessage.textContent = `Congratulations! ${winnerName} has conquered the world!`;
+                victoryMessage.textContent = `COMMAND: GLOBAL DOMINATION SECURED! ${winnerName} HAS CONQUERED THE WORLD!`;
             }
             
             victoryScreen.classList.add('show');
@@ -2666,8 +3217,18 @@
 
         // Play sound effect
         function playSound(soundName) {
-            // In a real implementation, you would use actual sound files
-            sounds[soundName].play();
+            try {
+                const sound = sounds[soundName];
+                if (sound) {
+                    // Clone the audio to allow overlapping sounds
+                    const soundClone = sound.cloneNode();
+                    soundClone.play().catch(e => {
+                        console.warn('Could not play sound:', soundName, e);
+                    });
+                }
+            } catch (error) {
+                console.warn('Error playing sound:', soundName, error);
+            }
         }
 
         // Setup event listeners for buttons
@@ -2680,6 +3241,8 @@
             document.getElementById('play-again').addEventListener('click', () => {
                 location.reload();
             });
+
+            document.getElementById('use-battle-rewards').addEventListener('click', useBattleRewards);
             
             // Phase control buttons
             document.getElementById('end-reinforce').addEventListener('click', () => {
@@ -2689,7 +3252,7 @@
                     gameState.phase = 'attack';
                     gameState.selectedTerritory = null;
                     updateUI();
-                    showNotification("Attack Phase: Click your territory, then an enemy territory to attack!");
+                    showNotification("COMMAND: ATTACK PHASE INITIATED! SELECT YOUR TERRITORY, THEN ENEMY TERRITORY TO ASSAULT!");
                 }
             });
 
@@ -2702,7 +3265,7 @@
                     gameState.attackTarget = null;
                     document.getElementById('attack-troop-selection').style.display = 'none';
                     updateUI();
-                    showNotification("Fortify Phase: Click your territory, then another to move troops.");
+                    showNotification("COMMAND: FORTIFY PHASE INITIATED! TRANSFER FORCES BETWEEN CONNECTED TERRITORIES.");
                 }
             });
 
@@ -2750,9 +3313,9 @@
                 document.querySelectorAll('#attack-troop-selection .troop-btn').forEach(btn => {
                     const btnTroops = parseInt(btn.getAttribute('data-troops'));
                     if (btnTroops === troops) {
-                        btn.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
+                        btn.style.background = 'linear-gradient(45deg, var(--ammo-brass), #e67e22)';
                     } else {
-                        btn.style.background = 'linear-gradient(45deg, #4a90e2, #3a7bc8)';
+                        btn.style.background = 'linear-gradient(45deg, var(--military-green), var(--camo-dark))';
                     }
                 });
             });
@@ -2766,9 +3329,9 @@
                 document.querySelectorAll('#fortify-troop-selection .troop-btn').forEach(btn => {
                     const btnTroops = parseInt(btn.getAttribute('data-troops'));
                     if (btnTroops === troops) {
-                        btn.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
+                        btn.style.background = 'linear-gradient(45deg, var(--ammo-brass), #e67e22)';
                     } else {
-                        btn.style.background = 'linear-gradient(45deg, #4a90e2, #3a7bc8)';
+                        btn.style.background = 'linear-gradient(45deg, var(--military-green), var(--camo-dark))';
                     }
                 });
             });
@@ -2787,9 +3350,9 @@
                         document.querySelectorAll('#attack-troop-selection .troop-btn').forEach(button => {
                             const btnTroops = parseInt(button.getAttribute('data-troops'));
                             if (btnTroops === troops) {
-                                button.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
+                                button.style.background = 'linear-gradient(45deg, var(--ammo-brass), #e67e22)';
                             } else {
-                                button.style.background = 'linear-gradient(45deg, #4a90e2, #3a7bc8)';
+                                button.style.background = 'linear-gradient(45deg, var(--military-green), var(--camo-dark))';
                             }
                         });
                     } else if (e.target.closest('#fortify-troop-selection')) {
@@ -2801,9 +3364,9 @@
                         document.querySelectorAll('#fortify-troop-selection .troop-btn').forEach(button => {
                             const btnTroops = parseInt(button.getAttribute('data-troops'));
                             if (btnTroops === troops) {
-                                button.style.background = 'linear-gradient(45deg, #f1c40f, #e67e22)';
+                                button.style.background = 'linear-gradient(45deg, var(--ammo-brass), #e67e22)';
                             } else {
-                                button.style.background = 'linear-gradient(45deg, #4a90e2, #3a7bc8)';
+                                button.style.background = 'linear-gradient(45deg, var(--military-green), var(--camo-dark))';
                             }
                         });
                     }
@@ -2849,17 +3412,17 @@
             
             updateUI();
             updateSelectionHighlighting();
-            showNotification(`${gameState.players[gameState.currentPlayer].name}'s turn - Reinforce Phase`);
+            showNotification(`${gameState.players[gameState.currentPlayer].name}'S TURN - REINFORCE PHASE`);
         }
 
         // Add leave game function
         function leaveGame() {
-            if (confirm('Are you sure you want to leave the game?')) {
+            if (confirm('COMMAND: CONFIRM MISSION ABORT?')) {
                 if (gameState.isMultiplayer && socket) {
                     socket.emit('leave-game');
                 } else {
                     // For local games, just go back to lobby
-                    showNotification('Leaving game...');
+                    showNotification('COMMAND: MISSION ABORTED...');
                     setTimeout(() => {
                         location.reload();
                     }, 1000);

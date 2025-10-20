@@ -1,6 +1,6 @@
 {
   "name": "world-domination",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "World Domination is a classic game of global conquest. Command your armies across 42 territories, forge alliances or betray friends, and use cunning strategy to eliminate all rivals in this epic battle for world supremacy.",
   "main": "server.js",
   "scripts": {

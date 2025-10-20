@@ -47,6 +47,10 @@ function createRoom(hostId, roomName, maxPlayers) {
 function joinRoom(playerId, roomId) {
     const room = rooms.get(roomId);
     if (room && room.players.length < room.maxPlayers && room.status === 'waiting') {
+        // Check if player is already in the room
+        if (room.players.includes(playerId)) {
+            return null; // Player already in room
+        }
         room.players.push(playerId);
         return room;
     }
@@ -72,6 +76,14 @@ function leaveRoom(playerId, roomId) {
     }
     
     console.log(`Room ${roomId} now has ${room.players.length} players`);
+    
+    // Delete room if no players left
+    if (room.players.length === 0) {
+        console.log(`Deleting empty room: ${room.name} (${roomId})`);
+        rooms.delete(roomId);
+        chatMessages.delete(roomId); // Also clean up chat messages
+        return null; // Room no longer exists
+    }
     
     return room;
 }
@@ -338,10 +350,22 @@ io.on('connection', (socket) => {
             return;
         }
         
+        // NEW: Check if player is already in this room
+        if (room.players.includes(socket.id)) {
+            socket.emit('join-error', 'You are already in this room');
+            return;
+        }
+        
         if (player && room) {
-            // Leave current room if any
-            if (player.roomId) {
+            // Leave current room if any (this handles the case where player is in a different room)
+            if (player.roomId && player.roomId !== roomId) {
                 leaveRoom(socket.id, player.roomId);
+            }
+            
+            // If player is already in this room, just send current room data
+            if (player.roomId === roomId) {
+                socket.emit('room-joined', getRoomData(roomId));
+                return;
             }
             
             const joinedRoom = joinRoom(socket.id, roomId);
@@ -387,7 +411,7 @@ io.on('connection', (socket) => {
             const roomId = player.roomId;
             const room = leaveRoom(socket.id, roomId);
             
-            // Add leave notification to chat
+            // Add leave notification to chat only if room still exists
             if (room) {
                 const leaveMessage = {
                     id: uuidv4(),
@@ -646,6 +670,7 @@ io.on('connection', (socket) => {
         
         players.delete(socket.id);
     });
+
 });
 
 // Helper functions
@@ -697,6 +722,7 @@ function initializeGameState(room) {
         color: playerColors[index],
         territories: [],
         reinforcements: 0,
+        battleRewards: 0,
         active: true
     }));
     
@@ -813,7 +839,29 @@ function processGameAction(room, data, playerIndex) {
                 }
             }
             break;
-            
+        case 'use-battle-rewards':
+            if (gameState.phase === 'reinforce') {
+                const player = gameState.players[playerIndex];
+                if (player.battleRewards && player.battleRewards > 0) {
+                    player.reinforcements += player.battleRewards;
+                    
+                    // Add notification
+                    const rewardMessage = {
+                        id: uuidv4(),
+                        playerId: 'system',
+                        playerName: 'System',
+                        message: `${player.name} used ${player.battleRewards} battle reward(s) for reinforcements!`,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    const messages = chatMessages.get(room.id) || [];
+                    messages.push(rewardMessage);
+                    io.to(room.id).emit('chat-message', rewardMessage);
+                    
+                    player.battleRewards = 0;
+                }
+            }
+            break;  
         case 'attack':
             if (gameState.phase === 'attack' && data.source && data.target) {
                 const source = gameState.territories.find(t => t.id === data.source);
@@ -822,24 +870,96 @@ function processGameAction(room, data, playerIndex) {
                 if (source && target && source.owner === playerIndex && 
                     target.owner !== playerIndex && source.connections.includes(target.id)) {
                     
-                    // Simple combat logic
-                    if (data.troops > target.troops) {
-                        // Attacker wins
+                    // Calculate battle rewards
+                    const attackerReward = calculateBattleReward();
+                    const defenderReward = calculateBattleReward();
+                    
+                    // Resolve combat using improved dice-based system
+                    const combatResult = resolveCombat(data.troops, target.troops);
+                    
+                    if (combatResult.attackerWins) {
+                        // Attacker wins the battle
+                        const previousOwner = target.owner;
+                        const defenderPlayer = gameState.players[previousOwner];
                         target.owner = playerIndex;
-                        target.troops = data.troops;
-                        source.troops -= data.troops;
+                        
+                        // Update troop counts
+                        source.troops -= data.troops; // Remove original attacking troops from source
+                        target.troops = combatResult.attackerRemaining; // Surviving troops move into conquered territory
                         
                         // Update territory lists
-                        const prevOwner = gameState.players[target.owner];
-                        const newOwner = gameState.players[playerIndex];
+                        const prevPlayer = gameState.players[previousOwner];
+                        const newPlayer = gameState.players[playerIndex];
                         
-                        prevOwner.territories = prevOwner.territories.filter(id => id !== target.id);
-                        newOwner.territories.push(target.id);
+                        prevPlayer.territories = prevPlayer.territories.filter(id => id !== target.id);
+                        newPlayer.territories.push(target.id);
+                        
+                        // Award battle reward to the attacker
+                        newPlayer.battleRewards = (newPlayer.battleRewards || 0) + attackerReward;
+                        
+                        // Add battle reward notification
+                        const rewardMessage = {
+                            id: uuidv4(),
+                            playerId: 'system',
+                            playerName: 'System',
+                            message: `${newPlayer.name} earned a battle reward of ${attackerReward} reinforcement(s) for conquering ${target.name}!`,
+                            timestamp: new Date().toISOString()
+                        };
+                        
+                        const messages = chatMessages.get(room.id) || [];
+                        messages.push(rewardMessage);
+                        io.to(room.id).emit('chat-message', rewardMessage);
+                        
+                        // Check if previous player has been eliminated
+                        if (prevPlayer.territories.length === 0) {
+                            prevPlayer.active = false;
+                            
+                            const eliminationMessage = {
+                                id: uuidv4(),
+                                playerId: 'system',
+                                playerName: 'System',
+                                message: `${prevPlayer.name} has been eliminated from the game!`,
+                                timestamp: new Date().toISOString()
+                            };
+                            
+                            messages.push(eliminationMessage);
+                            io.to(room.id).emit('chat-message', eliminationMessage);
+                        }
                     } else {
-                        // Defender wins
-                        target.troops -= Math.floor(target.troops / 2);
-                        source.troops -= data.troops;
+                        // Defender wins the battle
+                        source.troops -= data.troops; // Attacker loses all attacking troops
+                        target.troops = combatResult.defenderRemaining; // Defender keeps surviving troops
+                        
+                        // Award battle reward to the defender
+                        const defenderPlayer = gameState.players[target.owner];
+                        defenderPlayer.battleRewards = (defenderPlayer.battleRewards || 0) + defenderReward;
+                        
+                        // Add defender reward notification
+                        const defenseMessage = {
+                            id: uuidv4(),
+                            playerId: 'system',
+                            playerName: 'System',
+                            message: `${defenderPlayer.name} earned a battle reward of ${defenderReward} reinforcement(s) for successfully defending ${target.name}!`,
+                            timestamp: new Date().toISOString()
+                        };
+                        
+                        const messages = chatMessages.get(room.id) || [];
+                        messages.push(defenseMessage);
+                        io.to(room.id).emit('chat-message', defenseMessage);
                     }
+                    
+                    // Add detailed combat result to chat
+                    const combatMessage = {
+                        id: uuidv4(),
+                        playerId: 'system',
+                        playerName: 'System',
+                        message: `BATTLE: ${gameState.players[playerIndex].name} attacked ${target.name} from ${source.name}. ${combatResult.attackerWins ? 'Attacker won!' : 'Defender held!'} (Attacker: ${combatResult.attackerRemaining} survived, Defender: ${combatResult.defenderRemaining} survived)`,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    const allMessages = chatMessages.get(room.id) || [];
+                    allMessages.push(combatMessage);
+                    io.to(room.id).emit('chat-message', combatMessage);
                 }
             }
             break;
@@ -928,6 +1048,70 @@ function checkWinCondition(gameState) {
     }
     
     return -1;
+}
+
+// Add dice rolling and combat logic to server
+function rollDice(numberOfDice) {
+    const rolls = [];
+    for (let i = 0; i < numberOfDice; i++) {
+        rolls.push(Math.floor(Math.random() * 6) + 1);
+    }
+    return rolls.sort((a, b) => b - a);
+}
+
+// Combat logic
+function resolveCombat(attackerTroops, defenderTroops) {
+
+    // Battle continues until one side is eliminated
+    while (attackerTroops > 0 && defenderTroops > 0) {
+        // Determine number of dice for each side
+        const attackerDice = Math.min(3, attackerTroops); // Max 3 dice
+        const defenderDice = Math.min(2, defenderTroops); // Max 2 dice
+        
+        // Roll dice
+        const attackerRolls = rollDice(attackerDice);
+        const defenderRolls = rollDice(defenderDice);
+        
+        // Compare dice (number of comparisons = min number of dice)
+        const comparisons = Math.min(attackerRolls.length, defenderRolls.length);
+        let attackerLosses = 0;
+        let defenderLosses = 0;
+        
+        for (let i = 0; i < comparisons; i++) {
+            if (attackerRolls[i] > defenderRolls[i]) {
+                defenderLosses++;
+            } else {
+                // Defender wins on ties
+                attackerLosses++;
+            }
+        }
+        
+        // Apply losses
+        attackerTroops -= attackerLosses;
+        defenderTroops -= defenderLosses;
+        
+        // Stop if battle is over
+        if (defenderTroops <= 0 || attackerTroops <= 0) {
+            break;
+        }
+    }
+    
+    return {
+        attackerRemaining: attackerTroops,
+        defenderRemaining: defenderTroops,
+        attackerWins: defenderTroops <= 0
+    };
+}
+
+// Calculate battle rewards
+function calculateBattleReward() {
+    const random = Math.random() * 100;
+    
+    if (random < 35) return 1;      // 35% probability
+    else if (random < 60) return 2; // 25% probability
+    else if (random < 80) return 3; // 20% probability
+    else if (random < 95) return 5; // 15% probability
+    else return 10;                 // 5% probability
 }
 
 const PORT = 3003;
