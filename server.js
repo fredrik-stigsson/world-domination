@@ -77,11 +77,11 @@ function leaveRoom(playerId, roomId) {
     
     console.log(`Room ${roomId} now has ${room.players.length} players`);
     
-    // Delete room if no players left
+    // Delete room if no players left (immediately clean up)
     if (room.players.length === 0) {
         console.log(`Deleting empty room: ${room.name} (${roomId})`);
         rooms.delete(roomId);
-        chatMessages.delete(roomId); // Also clean up chat messages
+        chatMessages.delete(roomId); // Clean up chat messages
         return null; // Room no longer exists
     }
     
@@ -263,12 +263,23 @@ io.on('connection', (socket) => {
     });
     
     // Send available rooms to the new player
-    socket.emit('rooms-list', getAvailableRooms());
+    socket.emit('rooms-list', {
+        rooms: getAvailableRooms(),
+        statistics: getRoomStatistics()
+    });
+
+    // Send player id
     socket.emit('player-id', socket.id);
     
     // Handle room list requests
     socket.on('get-rooms', () => {
-        socket.emit('rooms-list', getAvailableRooms());
+        const availableRooms = getAvailableRooms();
+        const stats = getRoomStatistics();
+        
+        socket.emit('rooms-list', {
+            rooms: availableRooms,
+            statistics: stats
+        });
     });
     
     // Handle player name setting
@@ -278,7 +289,7 @@ io.on('connection', (socket) => {
             player.name = name.trim();
             
             // Notify all clients about room updates when name changes
-            io.emit('rooms-list', getAvailableRooms());
+            broadcastRoomsUpdate();
             
             // Notify room if player is in one
             if (player.roomId) {
@@ -323,7 +334,7 @@ io.on('connection', (socket) => {
             socket.emit('chat-history', messages);
             
             // Notify ALL players about room update
-            io.emit('rooms-list', getAvailableRooms());
+            broadcastRoomsUpdate();
             io.to(room.id).emit('room-updated', getRoomData(room.id));
             
             console.log(`Room created: ${room.name} by ${player.name}`);
@@ -376,7 +387,7 @@ io.on('connection', (socket) => {
                 socket.emit('room-joined', getRoomData(roomId));
                 
                 // Notify ALL players about room update
-                io.emit('rooms-list', getAvailableRooms());
+                broadcastRoomsUpdate();
                 io.to(roomId).emit('room-updated', getRoomData(roomId));
                 
                 // Add join notification to chat
@@ -432,7 +443,7 @@ io.on('connection', (socket) => {
             player.roomId = null;
             
             socket.emit('room-left');
-            io.emit('rooms-list', getAvailableRooms());
+            broadcastRoomsUpdate();
             
             if (room) {
                 io.to(roomId).emit('room-updated', getRoomData(roomId));
@@ -485,7 +496,7 @@ io.on('connection', (socket) => {
             player.roomId = null;
             
             socket.emit('game-left');
-            io.emit('rooms-list', getAvailableRooms());
+            broadcastRoomsUpdate();
             
             if (updatedRoom) {
                 io.to(roomId).emit('room-updated', getRoomData(roomId));
@@ -648,7 +659,7 @@ io.on('connection', (socket) => {
             // Handle room leaving
             const updatedRoom = leaveRoom(socket.id, roomId);
             
-            io.emit('rooms-list', getAvailableRooms());
+            broadcastRoomsUpdate();
             
             if (updatedRoom) {
                 io.to(roomId).emit('room-updated', getRoomData(roomId));
@@ -674,7 +685,41 @@ io.on('connection', (socket) => {
 });
 
 // Helper functions
+function getRoomStatistics() {
+    const allRooms = Array.from(rooms.values());
+    
+    return {
+        total: allRooms.length,
+        waiting: allRooms.filter(room => room.status === 'waiting').length,
+        playing: allRooms.filter(room => room.status === 'playing').length,
+        finished: allRooms.filter(room => room.status === 'finished').length
+    };
+}
+
+function cleanupEmptyRooms() {
+    let cleanedCount = 0;
+    
+    for (const [roomId, room] of rooms.entries()) {
+        if (room.players.length === 0) {
+            console.log(`Cleaning up empty room: ${room.name} (${roomId})`);
+            rooms.delete(roomId);
+            chatMessages.delete(roomId);
+            cleanedCount++;
+        }
+    }
+    
+    if (cleanedCount > 0) {
+        console.log(`Cleaned up ${cleanedCount} empty rooms`);
+    }
+    
+    return cleanedCount;
+}
+
 function getAvailableRooms() {
+    
+    // Clean up empty rooms first
+    cleanupEmptyRooms();
+    
     const availableRooms = Array.from(rooms.values())
         .filter(room => room.status === 'waiting' && room.players.length < room.maxPlayers)
         .map(room => ({
@@ -703,6 +748,16 @@ function getRoomData(roomId) {
         maxPlayers: room.maxPlayers,
         status: room.status
     };
+}
+
+function broadcastRoomsUpdate() {
+    const availableRooms = getAvailableRooms();
+    const stats = getRoomStatistics();
+    
+    io.emit('rooms-list', {
+        rooms: availableRooms,
+        statistics: stats
+    });
 }
 
 // And update getPlayerIndex to be simpler:
@@ -1064,6 +1119,7 @@ function resolveCombat(attackerTroops, defenderTroops) {
 
     // Battle continues until one side is eliminated
     while (attackerTroops > 0 && defenderTroops > 0) {
+        
         // Determine number of dice for each side
         const attackerDice = Math.min(3, attackerTroops); // Max 3 dice
         const defenderDice = Math.min(2, defenderTroops); // Max 2 dice

@@ -310,7 +310,6 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
-            margin: 4px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             font-size: clamp(0.9rem, 2vw, 1rem);
             touch-action: manipulation;
@@ -320,6 +319,7 @@
             font-family: 'Courier New', monospace;
             position: relative;
             overflow: hidden;
+            margin: 4px 0 4px 0;
         }
 
         button::before {
@@ -1082,7 +1082,7 @@
             background: rgba(0, 0, 0, 0.5);
             color: var(--desert-tan);
             font-family: 'Courier New', monospace;
-            margin: 4px;
+            margin: 4px 0 4px 0;
         }
 
         .chat-input:focus {
@@ -1202,6 +1202,84 @@
             color: var(--ammo-brass);
             font-size: 0.9rem;
         }
+
+        /* Room Statistics */
+        .room-statistics {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 30px 0 15px 0;
+            border: 1px solid var(--steel-gray);
+            position: relative;
+        }
+
+        .room-statistics::before {
+            content: "MISSION STATUS";
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            background: var(--military-green);
+            color: var(--desert-tan);
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--desert-tan);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            margin: 4px 0 4px 0;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--ammo-brass);
+            text-shadow: 0 0 5px rgba(181, 166, 66, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .stats-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .stat-item {
+                flex-direction: row;
+                justify-content: space-between;
+                min-width: auto;
+            }
+            
+            .stat-label {
+                margin-bottom: 0;
+                text-align: left;
+            }
+            
+            .stat-value {
+                text-align: right;
+            }
+        }
     </style>
 </head>
 <body class="no-select">
@@ -1244,9 +1322,9 @@
                     
                     <div class="join-room">
                         <h3>ACTIVE THEATERS</h3>
-                        <button id="refresh-rooms" style="padding: 5px 10px; font-size: 0.8rem;">🔄 SCAN</button>
+                        <button id="refresh-rooms">SCAN</button>
                         <div id="rooms-list" class="rooms-list">
-                            <div class="no-rooms">NO ACTIVE THEATERS DETECTED</div>
+                            <div class="no-rooms">NO AVAILABLE MISSIONS DETECTED</div>
                         </div>
                     </div>
                 </div>
@@ -1816,19 +1894,26 @@
             socket.emit('start-game');
         }
 
-        function updateRoomsList(rooms) {
+        function updateRoomsList(data) {
             const roomsList = document.getElementById('rooms-list');
             
-            //console.log('Updating rooms list with:', rooms);
+            // Handle both old format (array) and new format (object with rooms and statistics)
+            const roomsArray = Array.isArray(data) ? data : data.rooms;
+            const statistics = data.statistics;
             
-            if (!rooms || rooms.length === 0) {
-                roomsList.innerHTML = '<div class="no-rooms">NO ACTIVE THEATERS DETECTED</div>';
+            // Update statistics display if available
+            if (statistics) {
+                updateRoomStatistics(statistics);
+            }
+            
+            if (!roomsArray || roomsArray.length === 0) {
+                roomsList.innerHTML = '<div class="no-rooms">NO AVAILABLE MISSIONS DETECTED</div>';
                 return;
             }
             
             roomsList.innerHTML = '';
             
-            rooms.forEach(room => {
+            roomsArray.forEach(room => {
                 const roomElement = document.createElement('div');
                 roomElement.className = 'room-item';
                 roomElement.innerHTML = `
@@ -1844,7 +1929,7 @@
                 roomsList.appendChild(roomElement);
             });
             
-            // Add event listeners to join buttons - FIXED: Use event delegation
+            // Add event listeners to join buttons
             roomsList.addEventListener('click', (e) => {
                 if (e.target.classList.contains('join-room-btn')) {
                     const roomId = e.target.getAttribute('data-room-id');
@@ -1854,9 +1939,43 @@
             });
         }
 
+        // Create or update statistics display
+        function updateRoomStatistics(stats) {
+            
+            let statsElement = document.getElementById('room-statistics');
+            
+            if (!statsElement) {
+                statsElement = document.createElement('div');
+                statsElement.id = 'room-statistics';
+                statsElement.className = 'room-statistics';
+                
+                // Insert before the rooms list
+                const roomsList = document.getElementById('rooms-list');
+                const joinRoomDiv = roomsList.parentElement;
+                joinRoomDiv.insertBefore(statsElement, roomsList);
+            }
+            
+            statsElement.innerHTML = `
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">AWAITING</span>
+                        <span class="stat-value">${stats.waiting}/${stats.total}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">ACTIVE</span>
+                        <span class="stat-value">${stats.playing}/${stats.total}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">COMPLETED</span>
+                        <span class="stat-value">${stats.finished}/${stats.total}</span>
+                    </div>
+                </div>
+            `;
+        }
+
         function refreshRoomsList() {
             if (socket) {
-                console.log('Manually refreshing rooms list');
+                //console.log('Manually refreshing rooms list');
                 // The server should automatically send rooms-list on request
                 // You can also emit a specific event to request rooms
                 socket.emit('get-rooms');
@@ -2693,7 +2812,7 @@
                 rolls.push(Math.floor(Math.random() * 6) + 1);
             }
             return rolls.sort((a, b) => b - a); // Sort descending
-}
+        }
 
         // Improved combat logic
         function resolveCombat(attackerTroops, defenderTroops) {
@@ -2736,7 +2855,7 @@
                 attackerTroops -= attackerLosses;
                 defenderTroops -= defenderLosses;
                 
-                battleLog.push(`LOSSES: Attacker: -${attackerLosses}, Defender: -${defenderLosses}`);
+                battleLog.push(`LOSSES: Attacker: ${attackerLosses}, Defender: ${defenderLosses}`);
                 battleLog.push(`REMAINING: Attacker: ${attackerTroops}, Defender: ${defenderTroops}`);
                 battleLog.push('---');
                 
@@ -2920,9 +3039,21 @@
             // Update territory details
             const territoryDetails = document.getElementById('territory-details');
             if (gameState.selectedTerritory) {
+
+                // Get the owner
                 const owner = gameState.players[gameState.selectedTerritory.owner];
+
+                // Find which region this territory belongs to
+                let territoryRegion = "UNKNOWN";
+                Object.entries(gameState.regions).forEach(([region, territories]) => {
+                    if (territories.includes(gameState.selectedTerritory.id)) {
+                        territoryRegion = region;
+                    }
+                });
+
                 territoryDetails.innerHTML = `
                     <p><strong>${gameState.selectedTerritory.name}</strong></p>
+                    <p>REGION: ${territoryRegion.toUpperCase()}</p>
                     <p>CONTROLLED BY: ${owner ? owner.name : 'UNKNOWN'}</p>
                     <p>FORCES: ${gameState.selectedTerritory.troops} UNITS</p>
                 `;
